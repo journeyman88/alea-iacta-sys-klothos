@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import net.unknowndomain.alea.messages.MsgBuilder;
 import net.unknowndomain.alea.messages.MsgStyle;
+import net.unknowndomain.alea.random.SingleResult;
 import net.unknowndomain.alea.roll.GenericResult;
 
 /**
@@ -28,15 +29,15 @@ import net.unknowndomain.alea.roll.GenericResult;
  */
 public class KlothosResults extends GenericResult
 {
-    private final List<Integer> actionResults;
-    private final Integer fateDice;
+    private final List<SingleResult<Integer>> actionResults;
+    private final SingleResult<Integer> fateDice;
     private int total = 0;
     private int luck = 0;
     private int misfortune = 0;
     
-    public KlothosResults(List<Integer> actionResults, Integer fateDice)
+    public KlothosResults(List<SingleResult<Integer>> actionResults, SingleResult<Integer> fateDice)
     {
-        List<Integer> tmp = new ArrayList<>(actionResults.size());
+        List<SingleResult<Integer>> tmp = new ArrayList<>(actionResults.size());
         tmp.addAll(actionResults);
         this.actionResults = Collections.unmodifiableList(tmp);
         this.fateDice = fateDice;
@@ -52,7 +53,7 @@ public class KlothosResults extends GenericResult
         misfortune++;
     }
     
-    public List<Integer> getActionResults()
+    public List<SingleResult<Integer>> getActionResults()
     {
         return actionResults;
     }
@@ -75,16 +76,18 @@ public class KlothosResults extends GenericResult
         {
             messageBuilder.append(indent).append("Roll ID: ").append(getUuid()).appendNewLine();
             messageBuilder.append("Dice Results: ").append(" [ ");
-            for (Integer t : getActionResults())
+            for (SingleResult<Integer> t : getActionResults())
             {
-                messageBuilder.append(t).append(" ");
+                messageBuilder.append("( ").append(t.getLabel()).append(" => ");
+                messageBuilder.append(t.getValue()).append(") ");
             }
             messageBuilder.append("]").appendNewLine();
             if (fateDice != null)
             {
                 messageBuilder.append("Fate Dice: ").append(" [ ");
-                messageBuilder.append(fateDice).append(" ");
-                messageBuilder.append("]").appendNewLine();
+                messageBuilder.append(fateDice.getLabel()).append(" => ");
+                messageBuilder.append(fateDice.getValue());
+                messageBuilder.append(" ]").appendNewLine();
             }
         }
     }

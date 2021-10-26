@@ -20,8 +20,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.unknowndomain.alea.dice.standard.D6;
-import net.unknowndomain.alea.pools.DicePool;
+import net.unknowndomain.alea.random.SingleResult;
+import net.unknowndomain.alea.random.SingleResultComparator;
+import net.unknowndomain.alea.random.dice.DicePool;
+import net.unknowndomain.alea.random.dice.bag.D6;
 import net.unknowndomain.alea.roll.GenericResult;
 import net.unknowndomain.alea.roll.GenericRoll;
 
@@ -68,39 +70,37 @@ public class KlothosRoll implements GenericRoll
     @Override
     public GenericResult getResult()
     {
-        List<Integer> actionRes = this.actionPool.getResults();
+        List<SingleResult<Integer>> actionRes = this.actionPool.getResults();
         KlothosResults results = buildResults(actionRes);
         results.setVerbose(mods.contains(KlothosModifiers.VERBOSE));
         return results;
     }
     
-    private KlothosResults buildResults(List<Integer> actionRes)
+    private KlothosResults buildResults(List<SingleResult<Integer>> actionRes)
     {
-        actionRes.sort((Integer o1, Integer o2) ->
-        {
-            return -1 * o1.compareTo(o2);
-        });
-        Integer fate = null;
+        SingleResultComparator<Integer> comp = new SingleResultComparator<>(true);
+        actionRes.sort(comp);
+        SingleResult<Integer> fate = null;
         if (mods.contains(KlothosModifiers.ENEMY_SPEC) || mods.contains(KlothosModifiers.CHAR_SPEC))
         {
-            fate = D6.INSTANCE.roll();
+            fate = D6.INSTANCE.nextResult().get();
         }
         KlothosResults results = new KlothosResults(actionRes, fate);
-        int dice = actionRes.get(0);
-        results.setTotal(approach + dice);
-        if (dice == 1)
+        SingleResult<Integer> dice = actionRes.get(0);
+        results.setTotal(approach + dice.getValue());
+        if (dice.getValue() == 1)
         {
             results.addMisfortune();
         }
-        if (dice == 6)
+        if (dice.getValue() == 6)
         {
             results.addLuck();
         }
-        if (mods.contains(KlothosModifiers.ENEMY_SPEC) && fate == 1)
+        if (mods.contains(KlothosModifiers.ENEMY_SPEC) && fate.getValue() == 1)
         {
             results.addMisfortune();
         }
-        if ((mods.contains(KlothosModifiers.CHAR_SPEC) && dice >= 5) || (mods.contains(KlothosModifiers.CHAR_MULTISPEC) && dice >= 4))
+        if ((mods.contains(KlothosModifiers.CHAR_SPEC) && dice.getValue() >= 5) || (mods.contains(KlothosModifiers.CHAR_MULTISPEC) && dice.getValue() >= 4))
         {
             results.addLuck();
         }
