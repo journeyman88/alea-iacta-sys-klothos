@@ -61,7 +61,7 @@ public class KlothosCommand extends RpgSystemCommand
         else
         {
             KlothosOptions opt = (KlothosOptions) options;
-            KlothosRoll roll = new KlothosRoll(opt.getApproach(), opt.getSpecialization(), opt.getModifiers());
+            KlothosRoll roll = new KlothosRoll(opt.getApproach(), opt.getSpecialization(), lang, opt.getModifiers());
             retVal = Optional.of(roll);
         }
         return retVal;

@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import net.unknowndomain.alea.random.SingleResult;
 import net.unknowndomain.alea.random.SingleResultComparator;
@@ -37,13 +38,14 @@ public class KlothosRoll implements GenericRoll
     private final DicePool<D6> actionPool;
     private final int approach;
     private final Set<KlothosModifiers> mods;
+    private final Locale lang;
     
-    public KlothosRoll(Integer approach, Integer specLevel, KlothosModifiers ... mod)
+    public KlothosRoll(Integer approach, Integer specLevel, Locale lang, KlothosModifiers ... mod)
     {
-        this(approach, specLevel, Arrays.asList(mod));
+        this(approach, specLevel, lang, Arrays.asList(mod));
     }
     
-    public KlothosRoll(Integer approach, Integer specLevel, Collection<KlothosModifiers> mod)
+    public KlothosRoll(Integer approach, Integer specLevel, Locale lang, Collection<KlothosModifiers> mod)
     {
         this.mods = new HashSet<>();
         if (mod != null)
@@ -65,6 +67,7 @@ public class KlothosRoll implements GenericRoll
         }
         this.actionPool = new DicePool<>(D6.INSTANCE, dice);
         this.approach = approach;
+        this.lang = lang;
     }
     
     @Override
