@@ -107,6 +107,7 @@ public class KlothosRoll implements GenericRoll
         {
             results.addLuck();
         }
+        results.setLang(lang);
         return results;
     }
 }
